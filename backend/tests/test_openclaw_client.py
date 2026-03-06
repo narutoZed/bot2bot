@@ -72,3 +72,17 @@ class TestOpenCLAWClient:
             
             with pytest.raises(Exception, match="404"):
                 await client.send_message("invalid_agent", "Hello")
+
+
+    @pytest.mark.asyncio
+    async def test_send_message_empty_message(self, client):
+        """Test sending empty message handling."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"status": "ok"}
+        
+        with patch("httpx.AsyncClient.request", new_callable=AsyncMock) as mock_request:
+            mock_request.return_value = mock_response
+            result = await client.send_message("agent1", "")
+            
+        assert result["status"] == "ok"

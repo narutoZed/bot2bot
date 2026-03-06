@@ -42,3 +42,17 @@ class TestWebSocketManager:
         # Broadcast should handle empty connections gracefully
         # The broadcast method would iterate over active_connections
         assert len(manager.active_connections) == 2
+
+
+    def test_multiple_connections(self, manager):
+        """Test managing multiple concurrent connections."""
+        manager.active_connections["client1"] = None
+        manager.active_connections["client2"] = None
+        manager.active_connections["client3"] = None
+        
+        assert len(manager.active_connections) == 3
+        
+        # Disconnect one client
+        manager.disconnect("client2")
+        assert len(manager.active_connections) == 2
+        assert "client2" not in manager.active_connections

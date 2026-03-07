@@ -1,4 +1,5 @@
 """WebSocket Manager for real-time chat."""
+
 from typing import Dict
 from fastapi import WebSocket
 
@@ -28,3 +29,11 @@ class WebSocketManager:
                 except Exception:
                     # Handle disconnection gracefully
                     self.disconnect(client_id)
+
+    async def send_to(self, client_id: str, message: dict):
+        """Send a message to a specific client."""
+        if client_id in self.active_connections:
+            try:
+                await self.active_connections[client_id].send_json(message)
+            except Exception:
+                self.disconnect(client_id)
